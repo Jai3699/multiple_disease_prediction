@@ -10,7 +10,7 @@ scaler_heart_stroke=pickle.load(open('/config/workspace/pickle/scaler_heart_stro
 scaler_hypertension=pickle.load(open('/config/workspace/pickle/scaler_hypertension.pkl','rb'))
 scaler_migraine=pickle.load(open('/config/workspace/pickle/scaler_migraine.pkl','rb'))
 rfc_heart_stroke=pickle.load(open('/config/workspace/pickle/rfc_heart_stroke.pkl','rb'))
-rfc_hypertension=pickle.load(open('/config/workspace/pickle/rfc_heart_stroke.pkl','rb'))
+rfc_hypertension=pickle.load(open('/config/workspace/pickle/rfc_hypertension.pkl','rb'))
 rfc_migraine=pickle.load(open('/config/workspace/pickle/rfc_migraine.pkl','rb'))
 @app.route("/")
 def index():
@@ -23,7 +23,6 @@ def enter_symptoms():
     if request.method == 'POST':
 
         disease = request.form.get('disease')
-        Disease=disease
         
         if disease == 'diabetes':
 
@@ -64,10 +63,10 @@ def fun():
         Age=float(request.form['Age'])
         outcome=decisiontree.predict([[Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age]])
         if outcome[0]==1:
-            result='Diabetic'
+            result='Person is Diabetic'
             return render_template('single_prediction.html',result=result)
         else:
-            result='non diabetic'
+            result='Person is not Diabetic'
             return render_template('single_prediction.html',result=result)
 
 @app.route('/heartstroke',methods=['POST'])
@@ -87,17 +86,17 @@ def fun1():
         scaled=scaler_heart_stroke.transform([[gender,age,hypertension,heart_disease,ever_married,work_type,Residence_type,avg_glucose_level,bmi,smoking_status]])
         outcome=rfc_heart_stroke.predict(scaled)
         if outcome[0]==1:
-            result='Stroke Chance'
+            result='Person has chances of Heart Stroke'
             return render_template('single_prediction.html',result=result)
         else:
-            result='Not Stroke'
+            result='Person has not chances of Heart Stroke'
             return render_template('single_prediction.html',result=result)
 
 
 @app.route('/hypertension',methods=['POST'])
 def fun2():
-
-    if request.method=='POST':
+    
+    if request.method=='POST':        
         education=int(request.form['education'])
         age=float(request.form['age'])
         BMI=float(request.form['BMI'])
@@ -106,10 +105,10 @@ def fun2():
         scaled=scaler_hypertension.transform([[education,age,BMI,currentSmoker,heartRate]])
         outcome=rfc_hypertension.predict(scaled)
         if outcome[0]==1:
-            result='Hypertension'
+            result='Person has Hypertension'
             return render_template('single_prediction.html',result=result)
         else:
-            result='Not Hypertension'
+            result='Person has not Hypertension'
             return render_template('single_prediction.html',result=result)    
 
 
@@ -133,30 +132,30 @@ def fun3():
         outcome=rfc_migraine.predict(scaled)
         for i in range(len(outcome)):
             if outcome[i]==0:
-                result='0'
+                result='Person has Basilar-type aura migraine'
                 return render_template('single_prediction.html',result=result)
             elif outcome[i]==1:
-                result='1'
+                result='Person has Familial hemiplegic migraine'
                 return render_template('single_prediction.html',result=result)
             elif outcome[i]==2:
-                result='2'
+                result='Person has Migraine without aura'
                 return render_template('single_prediction.html',result=result)  
 
             elif outcome[i]==3:
-                result='3'
+                result='Person has Other problem'
                 return render_template('single_prediction.html',result=result) 
             elif outcome[i]==4:
-                result='4'
+                result='Person has Sporadic hemiplegic migraine'
                 return render_template('single_prediction.html',result=result)  
             elif outcome[i]==5:
-                result='5'
+                result='Person has Typical aura with migraine'
                 return render_template('single_prediction.html',result=result)     
             elif outcome[i]==6:
-                result='6'
+                result='Person has Typical aura without migraine'
                 return render_template('single_prediction.html',result=result)      
 
 
 if __name__ == '__main__':
 
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=8000)
     app.run(debug=True)
